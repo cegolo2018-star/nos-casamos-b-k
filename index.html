@@ -158,6 +158,19 @@ img{max-width:100%;display:block}
 .card .mini-btns{display:flex;gap:8px;justify-content:center;margin-top:18px;flex-wrap:wrap;position:relative;z-index:1}
 .btn.mini{font-size:.66rem;padding:9px 15px;letter-spacing:.16em;text-indent:.16em}
 .btn.mini svg{width:14px;height:14px}
+.regalos-cards{max-width:780px;margin-left:auto;margin-right:auto}
+.qr-box{width:186px;height:186px;margin:8px auto 0;border-radius:16px;background:var(--marfil);border:1px solid var(--salvia-bruma);display:flex;align-items:center;justify-content:center;overflow:hidden}
+.qr-box img{width:100%;height:100%;object-fit:contain;padding:8px}
+.qr-box.empty{border:1.6px dashed var(--salvia)}
+.qr-box .qr-ph{font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;text-align:center;padding:0 16px;line-height:1.7;color:var(--salvia-prof)}
+.qr-cap{margin-top:14px;font-weight:600;letter-spacing:.1em;color:var(--salvia-prof)}
+.bank{margin:10px auto 0;text-align:left;display:inline-block;min-width:230px}
+.bank .row{display:flex;justify-content:space-between;gap:22px;padding:9px 2px;border-bottom:1px solid var(--salvia-bruma)}
+.bank .row:last-child{border-bottom:none}
+.bank .k{font-size:.66rem;letter-spacing:.2em;text-transform:uppercase;color:var(--salvia-prof);align-self:center}
+.bank .v{font-weight:600;font-variant-numeric:tabular-nums}
+.bank-empty{color:var(--salvia-prof);font-style:italic;margin-top:12px}
+.copy-btn{margin-top:18px;display:inline-flex}
 
 /* separador botánico */
 .divisor{display:flex;justify-content:center;align-items:center;gap:18px;padding:8px 0;opacity:.9}
@@ -268,7 +281,16 @@ const CONFIG = {
 
   confirmarAntesDe: "25 de septiembre",  // ← fecha límite de confirmación (editable)
   whatsappRSVP: "51948542918",           // número que recibe las confirmaciones (Perú, +51)
-  mesaDeRegalosURL: "",                  // ← enlace a mesa de regalos (opcional)
+  // Regalos: billetera digital (QR) + transferencia bancaria.
+  // Cuando tengas el QR y el número, complétalos aquí.
+  regalos: {
+    billeteraNombre: "Yape / Plin",   // nombre de la billetera digital (editable)
+    qrURL: "",                        // ← pega la imagen del QR (URL o data URI). Vacío = "disponible pronto"
+    banco: "",                        // ← nombre del banco
+    cuenta: "",                       // ← número de cuenta
+    cci: "",                          // ← CCI interbancario (opcional)
+    titular: ""                       // ← titular de la cuenta
+  },
 
   // Música de fondo: por ahora una pieza instrumental genérica ya incrustada.
   // Cuando tengas el MP3 de Chayanne, reemplaza TODO el valor de musicaURL por
@@ -382,14 +404,13 @@ const CONFIG = {
 <section class="section banda" id="galeria">
   <div class="label reveal">Momentos que atesoramos</div>
   <h2 class="script reveal d1">Nuestra galería</h2>
-  <p class="lead reveal d2">Algunos recuerdos del camino que nos trajo hasta el altar.</p>
+  <p class="lead reveal d2">Algunos recuerdos del camino que nos trajo hasta hoy.</p>
   <!-- Para usar fotos reales: dentro de cada div.foto, reemplaza el contenido por <img src="ruta-o-url.jpg" alt="..."> -->
   <div class="galeria reveal d2" id="galeria-grid">
     <div class="foto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 8"/></svg><span class="ph">Foto 1</span></div>
     <div class="foto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 8"/></svg><span class="ph">Foto 2</span></div>
     <div class="foto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 8"/></svg><span class="ph">Foto 3</span></div>
     <div class="foto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 8"/></svg><span class="ph">Foto 4</span></div>
-    <div class="foto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 8"/></svg><span class="ph">Foto 5</span></div>
   </div>
 </section>
 
@@ -407,15 +428,22 @@ const CONFIG = {
 <!-- ============ REGALOS ============ -->
 <section class="section" id="regalos">
   <div class="label reveal">Tu cariño es lo más importante</div>
-  <h2 class="script reveal d1">Mesa de regalos</h2>
-  <p class="lead reveal d2">Tu presencia es nuestro mejor regalo. Pero si deseas tener un detalle con nosotros,
-     una <strong>lluvia de sobres</strong> el día de la boda nos ayudará a comenzar esta nueva etapa.
-     También puedes visitar nuestra mesa de regalos:</p>
-  <div class="btns reveal d3">
-    <a class="btn" id="btn-regalos" target="_blank" rel="noopener">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="8" width="18" height="4"/><rect x="5" y="12" width="14" height="9"/><path d="M12 8v13M12 8c-2 0-4.5-1-4.5-3A1.9 1.9 0 0110 3.2C11.5 3.6 12 6 12 8zm0 0c2 0 4.5-1 4.5-3A1.9 1.9 0 0014 3.2C12.5 3.6 12 6 12 8z"/></svg>
-      Ver mesa de regalos
-    </a>
+  <h2 class="script reveal d1">Un detalle para nosotros</h2>
+  <p class="lead reveal d2">Tu presencia es nuestro mejor regalo. Y si deseas tener un detalle con nosotros,
+     puedes hacerlo por billetera digital o por transferencia. ¡Gracias de todo corazón!</p>
+
+  <div class="cards regalos-cards">
+    <div class="card reveal d1">
+      <svg class="icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M10.5 19h3"/><rect x="9" y="6" width="2.4" height="2.4"/><rect x="12.6" y="6" width="2.4" height="2.4"/><rect x="9" y="9.6" width="2.4" height="2.4"/><rect x="12.6" y="9.6" width="2.4" height="2.4" opacity=".5"/></svg>
+      <h3>Billetera digital</h3>
+      <div class="qr-box" id="qr-box"></div>
+      <p class="qr-cap" id="billetera-nombre">Yape / Plin</p>
+    </div>
+    <div class="card reveal d2">
+      <svg class="icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M3 9.5l9-5.5 9 5.5"/><path d="M5 9.5V19M9 9.5V19M15 9.5V19M19 9.5V19"/><path d="M3 21h18"/></svg>
+      <h3>Transferencia bancaria</h3>
+      <div class="bank" id="bank-box"></div>
+    </div>
   </div>
 </section>
 
@@ -570,10 +598,33 @@ const CONFIG = {
     window.open(`https://wa.me/${C.whatsappRSVP}?text=${encodeURIComponent(msg)}`,'_blank');
   });
 
-  // Mesa de regalos
-  const br=$('btn-regalos');
-  if(C.mesaDeRegalosURL){br.href=C.mesaDeRegalosURL}
-  else{br.addEventListener('click',e=>{e.preventDefault();alert('Los novios pronto publicarán su mesa de regalos. ¡Gracias por tu cariño!')})}
+  // Regalos: billetera digital (QR) + transferencia bancaria
+  (function(){
+    const R=C.regalos||{};
+    const qb=$('qr-box');
+    if(R.qrURL){ qb.innerHTML='<img src="'+R.qrURL+'" alt="QR de billetera digital">'; }
+    else{ qb.classList.add('empty'); qb.innerHTML='<span class="qr-ph">QR disponible<br>muy pronto</span>'; }
+    $('billetera-nombre').textContent=R.billeteraNombre||'Billetera digital';
+
+    const bb=$('bank-box');
+    const rows=[['Banco',R.banco],['Cuenta',R.cuenta],['CCI',R.cci],['Titular',R.titular]].filter(r=>r[1]);
+    if(rows.length){
+      bb.innerHTML=rows.map(r=>`<div class="row"><span class="k">${r[0]}</span><span class="v">${r[1]}</span></div>`).join('');
+      if(R.cuenta){
+        const btn=document.createElement('button');
+        btn.className='btn mini solid copy-btn';
+        btn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 012-2h8"/></svg>Copiar cuenta';
+        btn.addEventListener('click',()=>{
+          navigator.clipboard&&navigator.clipboard.writeText(R.cuenta);
+          const t=btn.querySelector('svg'); btn.childNodes[btn.childNodes.length-1].nodeValue='¡Copiado!';
+          setTimeout(()=>{btn.childNodes[btn.childNodes.length-1].nodeValue='Copiar cuenta';},1800);
+        });
+        bb.appendChild(btn);
+      }
+    } else {
+      bb.innerHTML='<p class="bank-empty">Datos de transferencia disponibles muy pronto.</p>';
+    }
+  })();
 
   // Música de fondo (opcional)
   if(C.musicaURL){
