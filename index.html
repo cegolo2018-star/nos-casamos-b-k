@@ -292,6 +292,10 @@ const CONFIG = {
     titular: ""                       // ← titular de la cuenta
   },
 
+  // Galería de fotos: nombres de archivo (o URLs). Se muestran en este orden.
+  // Deben estar en la MISMA carpeta donde subas este HTML. Agrega más cuando las tengas.
+  galeria: ["img1.jpeg", "img2.jpeg"],
+
   // Música de fondo: por ahora una pieza instrumental genérica ya incrustada.
   // Cuando tengas el MP3 de Chayanne, reemplaza TODO el valor de musicaURL por
   // la URL del archivo (o su data URI) y listo.
@@ -405,13 +409,8 @@ const CONFIG = {
   <div class="label reveal">Momentos que atesoramos</div>
   <h2 class="script reveal d1">Nuestra galería</h2>
   <p class="lead reveal d2">Algunos recuerdos del camino que nos trajo hasta hoy.</p>
-  <!-- Para usar fotos reales: dentro de cada div.foto, reemplaza el contenido por <img src="ruta-o-url.jpg" alt="..."> -->
-  <div class="galeria reveal d2" id="galeria-grid">
-    <div class="foto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 8"/></svg><span class="ph">Foto 1</span></div>
-    <div class="foto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 8"/></svg><span class="ph">Foto 2</span></div>
-    <div class="foto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 8"/></svg><span class="ph">Foto 3</span></div>
-    <div class="foto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 8"/></svg><span class="ph">Foto 4</span></div>
-  </div>
+  <!-- Las fotos se toman de CONFIG.galeria (arriba). Súbelas a la misma carpeta que este HTML. -->
+  <div class="galeria reveal d2" id="galeria-grid"></div>
 </section>
 
 <!-- ============ VESTIMENTA ============ -->
@@ -643,6 +642,19 @@ const CONFIG = {
   // Barra superior tras salir de la portada
   const tb=$('topbar');
   addEventListener('scroll',()=>{tb.classList.toggle('show',scrollY>innerHeight*0.7)},{passive:true});
+
+  // Galería de fotos (desde CONFIG.galeria)
+  (function(){
+    const grid=$('galeria-grid'); if(!grid) return;
+    const fotos=Array.isArray(C.galeria)?C.galeria:[];
+    if(!fotos.length){
+      grid.innerHTML='<div class="foto"><span class="ph">Fotos muy pronto</span></div>';
+      return;
+    }
+    grid.innerHTML=fotos.map((src,i)=>
+      `<div class="foto"><img src="${src}" alt="Kattya y Bihai, foto ${i+1}" loading="lazy" onerror="this.parentNode.classList.add('sinfoto');this.replaceWith(Object.assign(document.createElement('span'),{className:'ph',textContent:'Foto '+(${i}+1)}))"></div>`
+    ).join('');
+  })();
 
   // Lightbox de la galería (solo para fotos reales)
   const lb=$('lightbox');
