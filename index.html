@@ -458,7 +458,7 @@ const CONFIG = {
     <label for="r-nombre">Nombre y apellido</label>
     <input id="r-nombre" type="text" placeholder="Ej.: María Fernández" required>
     <label for="r-cant">Número de personas</label>
-    <select id="r-cant"><option>1</option><option>2</option><option selected>3</option><option>4</option><option>5</option></select>
+    <select id="r-cant"><option>Ninguna</option><option>1</option><option>2</option><option selected>3</option><option>4</option><option>5</option></select>
     <label for="r-asiste">¿Nos acompañarás?</label>
     <select id="r-asiste"><option value="si">Sí, ¡ahí estaré!</option><option value="no">Lamentablemente no podré</option></select>
     <button type="submit" class="btn solid">
@@ -593,7 +593,7 @@ const CONFIG = {
     e.preventDefault();
     const n=$('r-nombre').value.trim()||'Invitado/a', c=$('r-cant').value, a=$('r-asiste').value;
     const msg=a==='si'
-      ?`¡Hola! Soy ${n}. Confirmo mi asistencia a la boda de ${C.nombres} (${fechaLarga}). Seremos ${c} persona(s). ¡Nos vemos! 🌿`
+      ?`¡Hola! Soy ${n}. Confirmo mi asistencia a la boda de ${C.nombres} (${fechaLarga}).${c==="Ninguna"?"":` Seremos ${c} persona(s).`} ¡Nos vemos! 🌿`
       :`Hola, soy ${n}. Lamentablemente no podré acompañarlos en su boda, pero les deseo toda la felicidad del mundo. 🤍`;
     window.open(`https://wa.me/${C.whatsappRSVP}?text=${encodeURIComponent(msg)}`,'_blank');
   });
