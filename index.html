@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bihai &amp; Katthya — ¡Nos casamos!</title>
-<meta name="description" content="Invitación a la boda de Bihai y Katthya · Viernes 09 de octubre de 2026 · Amarilis, Huánuco">
+<title>Kattya &amp; Bihai — ¡Nos casamos!</title>
+<meta name="description" content="Invitación a la boda de Kattya y Bihai · Viernes 09 de octubre de 2026 · Amarilis, Huánuco">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Ms+Madi&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
 <style>
 /* ============================================================
-   IDENTIDAD VISUAL — Boda Bihai & Katthya
+   IDENTIDAD VISUAL — Boda Kattya & Bihai
    Paleta: verde salvia · marfil · beige natural · yute
    Tipografías: Ms Madi (caligráfica) + Cormorant Garamond (serif)
    ============================================================ */
@@ -256,8 +256,8 @@ footer .corazon-mini{color:var(--salvia-suave)}
 <!-- ████ CONFIGURACIÓN — edita solo este bloque ████ -->
 <script>
 const CONFIG = {
-  nombres: "Bihai y Katthya",            // orden tal como aparece en la portada
-  novia: "Katthya",                      // (para textos internos)
+  nombres: "Kattya y Bihai",            // orden tal como aparece en la portada
+  novia: "Kattya",                      // la novia va primero
   novio: "Bihai",
 
   // Fecha y hora de la CEREMONIA (año, mes 1-12, día, hora, minuto)
@@ -301,7 +301,7 @@ const CONFIG = {
 
 <!-- barra superior -->
 <nav class="topbar" id="topbar" aria-label="Secciones">
-  <a href="#inicio" class="mono-mini">B&amp;K</a>
+  <a href="#inicio" class="mono-mini">K&amp;B</a>
   <a href="#fecha">Fecha</a>
   <a href="#evento">Evento</a>
   <a href="#galeria">Galería</a>
@@ -322,11 +322,11 @@ const CONFIG = {
 
   <div class="tag-wrap reveal d3" aria-hidden="true">
     <div class="hilo"></div>
-    <div class="tag"><div class="ini script">B <span style="font-size:.6em">&amp;</span> K</div></div>
+    <div class="tag"><div class="ini script">K <span style="font-size:.6em">&amp;</span> B</div></div>
   </div>
 
   <div class="label nos-casamos reveal">— ¡ Nos casamos ! —</div>
-  <h1 class="script reveal d1">Bihai <span class="y">y</span> Katthya</h1>
+  <h1 class="script reveal d1">Kattya <span class="y">y</span> Bihai</h1>
   <div class="fecha-hero reveal d2">
     <span class="sep"></span><span id="fecha-hero-txt"></span><span class="sep"></span>
   </div>
@@ -471,8 +471,8 @@ const CONFIG = {
 
 <!-- ============ PIE ============ -->
 <footer>
-  <div class="mono">B &amp; K</div>
-  <p>Bihai &amp; Katthya · 09 · 10 · 2026</p>
+  <div class="mono">K &amp; B</div>
+  <p>Kattya &amp; Bihai · 09 · 10 · 2026</p>
   <p style="margin-top:22px;letter-spacing:.2em;font-size:.78rem;opacity:.75">Hecho con <span class="corazon-mini">♥</span> para nuestro día más especial</p>
 </footer>
 
@@ -582,7 +582,7 @@ const CONFIG = {
       `SUMMARY:${titulo}`,`DESCRIPTION:${det}`,`LOCATION:${C.ceremonia.lugar}, ${C.ceremonia.direccion}`,'END:VEVENT','END:VCALENDAR'].join('\r\n');
     const a=document.createElement('a');
     a.href=URL.createObjectURL(new Blob([ics],{type:'text/calendar'}));
-    a.download='boda-bihai-y-katthya.ics'; a.click(); URL.revokeObjectURL(a.href);
+    a.download='boda-kattya-y-bihai.ics'; a.click(); URL.revokeObjectURL(a.href);
     // alternativa Google Calendar
     const g=`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(titulo)}&dates=${f(ini)}/${f(fin)}&details=${encodeURIComponent(det)}&location=${encodeURIComponent(C.ceremonia.lugar+', '+C.ceremonia.direccion)}`;
     setTimeout(()=>{ if(confirm('¿Deseas abrirlo también en Google Calendar?')) window.open(g,'_blank'); },400);
