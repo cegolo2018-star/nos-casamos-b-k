@@ -28,7 +28,7 @@
   --sombra: 0 18px 50px -18px rgba(67,80,60,.25);
 }
 *{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth}
+html{scroll-behavior:smooth;overflow-x:hidden}
 body{
   font-family:'Cormorant Garamond', Georgia, serif;
   background:var(--marfil);
@@ -65,7 +65,7 @@ img{max-width:100%;display:block}
    ============================================================ */
 .hero{
   min-height:100svh;display:flex;flex-direction:column;justify-content:center;align-items:center;
-  text-align:center;position:relative;padding:90px 24px 120px;
+  text-align:center;position:relative;overflow:hidden;padding:90px 24px 120px;
   background:
     radial-gradient(1100px 520px at 50% -10%, var(--salvia-bruma) 0%, transparent 60%),
     var(--marfil);
