@@ -300,7 +300,8 @@ const CONFIG = {
 
   // Música de fondo: reproductor de YouTube oculto, controlado por el botón flotante.
   musicaYouTubeId: "dsLjyLn859g", // Chayanne — Bailando Bachata
-  musicaInicioSeg: 15             // inicia en el segundo 15 y se repite en bucle
+  musicaInicioSeg: 23,            // inicia en el segundo 23
+  musicaFinSeg: 163              // repite el tramo hasta 2:43 (163 s) y vuelve al inicio
 };
 </script>
 
@@ -628,22 +629,33 @@ const CONFIG = {
     }
   })();
 
-  // Música de fondo — reproductor de YouTube oculto (inicia en el segundo indicado, en bucle)
+  // Música de fondo — reproductor de YouTube oculto; repite el tramo [inicio, fin] en bucle
   if(C.musicaYouTubeId){
     const btn=$('musica-btn'); btn.hidden=false;
-    let ytPlayer=null, ytReady=false, wantPlay=false;
+    let ytPlayer=null, ytReady=false, wantPlay=false, loopTimer=null;
     const inicio=C.musicaInicioSeg||0;
+    const fin=C.musicaFinSeg||0;
     const setIcon=(playing)=>{
       btn.classList.toggle('playing',playing);
       $('ic-play').style.display=playing?'none':'block';
       $('ic-pause').style.display=playing?'block':'none';
+    };
+    const vigilarBucle=()=>{
+      clearInterval(loopTimer);
+      loopTimer=setInterval(()=>{
+        if(!ytPlayer||!ytReady) return;
+        if(ytPlayer.getPlayerState()===YT.PlayerState.PLAYING){
+          const t=ytPlayer.getCurrentTime();
+          if((fin>inicio && t>=fin) || t<inicio-1){ ytPlayer.seekTo(inicio,true); }
+        }
+      },400);
     };
     window.onYouTubeIframeAPIReady=function(){
       ytPlayer=new YT.Player('yt-player',{
         videoId:C.musicaYouTubeId, height:'1', width:'1',
         playerVars:{start:inicio, controls:0, disablekb:1, modestbranding:1, rel:0, playsinline:1, fs:0},
         events:{
-          onReady:()=>{ ytReady=true; try{ytPlayer.setVolume(70);}catch(e){}; if(wantPlay){ytPlayer.seekTo(inicio,true);ytPlayer.playVideo();} },
+          onReady:()=>{ ytReady=true; try{ytPlayer.setVolume(70);}catch(e){}; vigilarBucle(); if(wantPlay){ytPlayer.seekTo(inicio,true);ytPlayer.playVideo();} },
           onStateChange:(e)=>{
             if(e.data===YT.PlayerState.ENDED){ ytPlayer.seekTo(inicio,true); ytPlayer.playVideo(); }
             setIcon(e.data===YT.PlayerState.PLAYING);
@@ -656,7 +668,7 @@ const CONFIG = {
       if(!ytReady||!ytPlayer){ wantPlay=true; return; }
       const st=ytPlayer.getPlayerState();
       if(st===YT.PlayerState.PLAYING){ ytPlayer.pauseVideo(); }
-      else{ try{ytPlayer.unMute();}catch(e){}; ytPlayer.playVideo(); }
+      else{ try{ytPlayer.unMute();}catch(e){}; const t=ytPlayer.getCurrentTime(); if(t<inicio||(fin>inicio&&t>=fin)){ytPlayer.seekTo(inicio,true);} ytPlayer.playVideo(); }
     });
   }
 
