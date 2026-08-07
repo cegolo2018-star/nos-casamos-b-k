@@ -299,6 +299,12 @@ body.sobre-bloqueado{overflow:hidden}
 @keyframes hintpulse{0%,100%{opacity:.4}50%{opacity:.85}}
 @media(max-width:520px){.sobre-deco{display:none}}
 @media (prefers-reduced-motion: reduce){.env__flap,.env__letter{transition:none}}
+
+/* Efecto de corazones al abrir el sobre */
+#hearts-layer{position:fixed;inset:0;z-index:300;pointer-events:none;overflow:hidden}
+.heart-p{position:absolute;will-change:transform,opacity;filter:drop-shadow(0 3px 5px rgba(67,80,60,.18))}
+.heart-hero{position:fixed;left:50%;top:50%;z-index:301;pointer-events:none;will-change:transform,opacity;
+  filter:drop-shadow(0 10px 22px rgba(111,131,100,.35))}
 </style>
 </head>
 <body class="sobre-bloqueado">
@@ -379,7 +385,7 @@ const CONFIG = {
   // Cuando tengas el QR y el número, complétalos aquí.
   regalos: {
     billeteraNombre: "Yape",
-    billeteraTitular: "Kattya Evelyn Meza Westreicer", // titular de la cuenta Yape
+    billeteraTitular: "Kattya Evelyn Meza Westreicher", // titular de la cuenta Yape
     qrURL: "QR.jpeg",              // QR de la billetera (mismo folder que el HTML)
     banco: "",                        // ← nombre del banco
     cuenta: "",                       // ← número de cuenta
@@ -816,11 +822,53 @@ const CONFIG = {
   const btn=document.getElementById('sobre-abrir');
   if(!overlay||!env) return;
   let abierto=false;
+  const HEART='<svg width="100%" height="100%" viewBox="0 0 32 30" xmlns="http://www.w3.org/2000/svg"><path d="M16 28C6 20.5 1 14.5 1 8.7 1 4.2 4.4 1 8 1c2.7 0 5 1.6 6 3.8C15 2.6 17.3 1 20 1c3.6 0 7 3.2 7 7.7C27 14.5 22 20.5 16 28z" __FILL__/></svg>';
+  const COLORS=['#A9BC9B','#6F8364','#C5D2B8','#BCCAAC','#C2A87F','#EAE1CF'];
+  function corazonCentral(){
+    const h=document.createElement('div'); h.className='heart-hero';
+    h.style.width='118px'; h.style.height='110px'; h.style.marginLeft='-59px'; h.style.marginTop='-58px';
+    h.innerHTML=HEART.replace('__FILL__','fill="#A9BC9B" stroke="#6F8364" stroke-width="0.8"');
+    document.body.appendChild(h);
+    h.animate([
+      {transform:'scale(0) rotate(-8deg)',opacity:0,offset:0},
+      {transform:'scale(1.18) rotate(2deg)',opacity:1,offset:.32},
+      {transform:'scale(.94) rotate(0deg)',opacity:1,offset:.44},
+      {transform:'scale(1.06)',opacity:1,offset:.56},
+      {transform:'translateY(-120px) scale(1)',opacity:0,offset:1}
+    ],{duration:2000,easing:'cubic-bezier(.2,.7,.2,1)',fill:'forwards'});
+    setTimeout(()=>{ if(h.parentNode) h.parentNode.removeChild(h); },2200);
+  }
+  function lluviaCorazones(){
+    const layer=document.createElement('div'); layer.id='hearts-layer'; document.body.appendChild(layer);
+    const cx=innerWidth/2, cy=innerHeight*0.52;
+    const N=matchMedia('(max-width:520px)').matches?24:38;
+    for(let i=0;i<N;i++){
+      const size=9+Math.random()*22;
+      const el=document.createElement('div'); el.className='heart-p';
+      el.style.width=size+'px'; el.style.height=size+'px';
+      el.style.left=(cx-70+Math.random()*140)+'px';
+      el.style.top=(cy-10+Math.random()*30)+'px';
+      el.style.opacity='0';
+      el.innerHTML=HEART.replace('__FILL__','fill="'+COLORS[(Math.random()*COLORS.length)|0]+'"');
+      layer.appendChild(el);
+      const driftX=Math.random()*300-150, rise=200+Math.random()*430, rot=Math.random()*140-70;
+      const dur=1900+Math.random()*1700, delay=Math.random()*650;
+      el.animate([
+        {transform:'translate(0,0) rotate(0deg) scale(.35)',opacity:0,offset:0},
+        {opacity:.95,offset:.14},
+        {opacity:.9,offset:.72},
+        {transform:'translate('+driftX+'px,'+(-rise)+'px) rotate('+rot+'deg) scale(1)',opacity:0,offset:1}
+      ],{duration:dur,delay:delay,easing:'cubic-bezier(.25,.6,.3,1)',fill:'forwards'});
+    }
+    setTimeout(()=>{ if(layer.parentNode) layer.parentNode.removeChild(layer); },3600);
+  }
   function abrir(){
     if(abierto) return; abierto=true;
     env.classList.add('abierto');
     // Iniciar música (este clic es el gesto que los móviles exigen)
     try{ window.__bodaPlayMusic && window.__bodaPlayMusic(); }catch(e){}
+    const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if(!reduce){ setTimeout(()=>{ corazonCentral(); lluviaCorazones(); }, 1150); }
     setTimeout(()=>{ overlay.classList.add('fuera'); }, 1350);
     setTimeout(()=>{ document.body.classList.remove('sobre-bloqueado'); if(overlay.parentNode) overlay.parentNode.removeChild(overlay); window.scrollTo(0,0); }, 2300);
   }
