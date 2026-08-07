@@ -300,6 +300,7 @@ const CONFIG = {
 
   // Música de fondo: reproductor de YouTube oculto, controlado por el botón flotante.
   musicaYouTubeId: "dsLjyLn859g", // Chayanne — Bailando Bachata
+  musicaReproducirAlAbrir: true,  // intenta sonar por defecto al abrir (o en la 1ª interacción)
   musicaInicioSeg: 23,            // inicia en el segundo 23
   musicaFinSeg: 163              // repite el tramo hasta 2:43 (163 s) y vuelve al inicio
 };
@@ -629,17 +630,22 @@ const CONFIG = {
     }
   })();
 
-  // Música de fondo — reproductor de YouTube oculto; repite el tramo [inicio, fin] en bucle
+  // Música de fondo — reproductor de YouTube oculto; repite el tramo [inicio, fin] en bucle.
+  // Suena por defecto: intenta autoplay y, si el navegador lo bloquea, arranca en la 1ª interacción.
   if(C.musicaYouTubeId){
     const btn=$('musica-btn'); btn.hidden=false;
-    let ytPlayer=null, ytReady=false, wantPlay=false, loopTimer=null;
+    let ytPlayer=null, ytReady=false, loopTimer=null, yaArranco=false;
     const inicio=C.musicaInicioSeg||0;
     const fin=C.musicaFinSeg||0;
+    const autoDefault=C.musicaReproducirAlAbrir!==false;
     const setIcon=(playing)=>{
       btn.classList.toggle('playing',playing);
       $('ic-play').style.display=playing?'none':'block';
       $('ic-pause').style.display=playing?'block':'none';
     };
+    const enTramo=()=>{ const t=(ytPlayer&&ytPlayer.getCurrentTime)?ytPlayer.getCurrentTime():0; return !(t<inicio||(fin>inicio&&t>=fin)); };
+    const irAlInicioSiHaceFalta=()=>{ if(!enTramo()){ try{ytPlayer.seekTo(inicio,true);}catch(e){} } };
+    const reproducir=()=>{ if(!ytReady||!ytPlayer) return; try{ytPlayer.unMute();}catch(e){}; irAlInicioSiHaceFalta(); ytPlayer.playVideo(); yaArranco=true; };
     const vigilarBucle=()=>{
       clearInterval(loopTimer);
       loopTimer=setInterval(()=>{
@@ -650,13 +656,19 @@ const CONFIG = {
         }
       },400);
     };
+    // Fallback: primera interacción del visitante inicia la música (política de autoplay)
+    const evs=['pointerdown','touchstart','click','keydown','scroll'];
+    const alInteractuar=()=>{ if(yaArranco) return; reproducir(); evs.forEach(ev=>window.removeEventListener(ev,alInteractuar,true)); };
+    if(autoDefault){ evs.forEach(ev=>window.addEventListener(ev,alInteractuar,{capture:true,passive:true})); }
+
     window.onYouTubeIframeAPIReady=function(){
       ytPlayer=new YT.Player('yt-player',{
         videoId:C.musicaYouTubeId, height:'1', width:'1',
-        playerVars:{start:inicio, controls:0, disablekb:1, modestbranding:1, rel:0, playsinline:1, fs:0},
+        playerVars:{start:inicio, autoplay:autoDefault?1:0, controls:0, disablekb:1, modestbranding:1, rel:0, playsinline:1, fs:0},
         events:{
-          onReady:()=>{ ytReady=true; try{ytPlayer.setVolume(70);}catch(e){}; vigilarBucle(); if(wantPlay){ytPlayer.seekTo(inicio,true);ytPlayer.playVideo();} },
+          onReady:()=>{ ytReady=true; try{ytPlayer.setVolume(70);}catch(e){}; vigilarBucle(); if(autoDefault){ try{ytPlayer.seekTo(inicio,true);ytPlayer.playVideo();}catch(e){} } },
           onStateChange:(e)=>{
+            if(e.data===YT.PlayerState.PLAYING){ yaArranco=true; }
             if(e.data===YT.PlayerState.ENDED){ ytPlayer.seekTo(inicio,true); ytPlayer.playVideo(); }
             setIcon(e.data===YT.PlayerState.PLAYING);
           }
@@ -665,10 +677,9 @@ const CONFIG = {
     };
     (function(){ const tag=document.createElement('script'); tag.src='https://www.youtube.com/iframe_api'; document.head.appendChild(tag); })();
     btn.addEventListener('click',()=>{
-      if(!ytReady||!ytPlayer){ wantPlay=true; return; }
-      const st=ytPlayer.getPlayerState();
-      if(st===YT.PlayerState.PLAYING){ ytPlayer.pauseVideo(); }
-      else{ try{ytPlayer.unMute();}catch(e){}; const t=ytPlayer.getCurrentTime(); if(t<inicio||(fin>inicio&&t>=fin)){ytPlayer.seekTo(inicio,true);} ytPlayer.playVideo(); }
+      if(!ytReady||!ytPlayer) return;
+      if(ytPlayer.getPlayerState()===YT.PlayerState.PLAYING){ ytPlayer.pauseVideo(); }
+      else{ reproducir(); }
     });
   }
 
